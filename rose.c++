@@ -1,4 +1,4 @@
-// A simple OpenGL program that draws a triangle.
+// A simple OpenGL program that draws a something.
 
 #include <iostream>
 #include "GL/freeglut.h"
