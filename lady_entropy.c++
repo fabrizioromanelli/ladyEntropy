@@ -301,7 +301,7 @@ int main(int argc, char **argv)
     // Set anti-aliasing for virtual display :1
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glLineWidth(0.5);
+    glLineWidth(3.0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_MULTISAMPLE);
