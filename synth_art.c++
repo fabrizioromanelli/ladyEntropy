@@ -4,6 +4,7 @@
 #include <time.h>       /* time */
 #include <bits/stdc++.h>
 #include <iostream>
+#include <string>
 #include "GL/freeglut.h"
 #include "GL/gl.h"
 #include <glm/glm.hpp>
@@ -16,6 +17,12 @@
 #include "includes/typedefs.hpp"
 
 using namespace glm;
+
+// Global variables
+bool isFile = false;
+int ROW     = 0;
+int COL     = 0;
+float SIZE  = 0.0;
 
 void drawCube(vec4 v0, vec4 v1, vec4 v2, vec4 v3) {
   glBegin(GL_LINE_STRIP);
@@ -106,12 +113,22 @@ int BMPWriter(const char *filename, int width, int height, unsigned char *imageD
   return 1;
 }
 
-void saveImage()
+void saveImage(int r, int c, float s)
 {
+  char filename[80];
   unsigned char* image = (unsigned char*)malloc(sizeof(unsigned char) * 3 * IMG_SIZE_X * IMG_SIZE_Y);
   glReadPixels(0, 0, IMG_SIZE_X - 1, IMG_SIZE_Y - 1, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+  strcpy(filename, "image-R");
+  strcat(filename, std::to_string(r).c_str());
+  strcat(filename, "-C");
+  strcat(filename, std::to_string(c).c_str());
+  strcat(filename, "-S");
+  strcat(filename, std::to_string(s).c_str());
+  strcat(filename, ".bmp");
+
   // PPMWriter(image, "image.ppm", IMG_SIZE_X, IMG_SIZE_Y);
-  BMPWriter("image.bmp", IMG_SIZE_X, IMG_SIZE_Y, image);
+  BMPWriter(filename, IMG_SIZE_X, IMG_SIZE_Y, image);
   return;
 }
 
@@ -124,22 +141,43 @@ void drawArt()
   glColor3f(0.0, 0.0, 0.0);
   glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
 
+  int row_size, col_size;
+  float cube_size;
+
+  if (ROW > 0) {
+    row_size = ROW;
+  } else {
+    row_size = ROW_SIZE;
+  }
+
+  if (COL > 0) {
+    col_size = COL;
+  } else {
+    col_size = COL_SIZE;
+  }
+
+  if (SIZE > 0.0) {
+    cube_size = SIZE;
+  } else {
+    cube_size = CUBE_SIZE;
+  }
+
   size_t matSize = 0;
   float trasChaos = 0.0, rotoChaos = 0.0, skewChaos = 0.0;
 
   vec3 rotationAxis(0.0, 0.0, 1.0); // Z-axis
   mat4 translMatrix, rotMatrix, scaleMatrix;
   vec4 _vertex0 = vec4(0.0, 0.0, 0.0, 1.0);
-  vec4 _vertex1 = vec4(0.0, CUBE_SIZE, 0.0, 1.0);
-  vec4 _vertex2 = vec4(CUBE_SIZE, CUBE_SIZE, 0.0, 1.0);
-  vec4 _vertex3 = vec4(CUBE_SIZE, 0.0, 0.0, 1.0);
-  vec4 v0[ROW_SIZE * COL_SIZE], v1[ROW_SIZE * COL_SIZE], v2[ROW_SIZE * COL_SIZE], v3[ROW_SIZE * COL_SIZE];
+  vec4 _vertex1 = vec4(0.0, cube_size, 0.0, 1.0);
+  vec4 _vertex2 = vec4(cube_size, cube_size, 0.0, 1.0);
+  vec4 _vertex3 = vec4(cube_size, 0.0, 0.0, 1.0);
+  vec4 v0[row_size * col_size], v1[row_size * col_size], v2[row_size * col_size], v3[row_size * col_size];
 
-  for (size_t i = 0; i < ROW_SIZE; i++)
+  for (size_t i = 0; i < row_size; i++)
   {
-    for (size_t j = 0; j < COL_SIZE; j++)
+    for (size_t j = 0; j < col_size; j++)
     {
-      translMatrix = translate(mat4(1.0f), vec3(-0.98 + CUBE_SIZE * j + trasChaos, 0.8 - CUBE_SIZE * i, 0.0));
+      translMatrix = translate(mat4(1.0f), vec3(-0.98 + cube_size * j + trasChaos, 0.8 - cube_size * i, 0.0));
       rotMatrix    = rotate(rotoChaos, rotationAxis); // radians - range for random rotoChaos [MIN_ROTO_CHAOS .. MAX_ROTO_CHAOS]
 
       v0[matSize] = translMatrix * rotMatrix * _vertex0;
@@ -149,21 +187,21 @@ void drawArt()
 
       // Apply skew chaos to roto-translated cubes
       if (j != 0) {
-        v0[matSize][X] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / COL_SIZE ) * randomSign();
-        v0[matSize][Y] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / COL_SIZE ) * randomSign();
-        v1[matSize][X] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / COL_SIZE ) * randomSign();
-        v1[matSize][Y] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / COL_SIZE ) * randomSign();
-        v2[matSize][X] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / COL_SIZE ) * randomSign();
-        v2[matSize][Y] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / COL_SIZE ) * randomSign();
-        v3[matSize][X] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / COL_SIZE ) * randomSign();
-        v3[matSize][Y] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / COL_SIZE ) * randomSign();
+        v0[matSize][X] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / col_size ) * randomSign();
+        v0[matSize][Y] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / col_size ) * randomSign();
+        v1[matSize][X] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / col_size ) * randomSign();
+        v1[matSize][Y] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / col_size ) * randomSign();
+        v2[matSize][X] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / col_size ) * randomSign();
+        v2[matSize][Y] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / col_size ) * randomSign();
+        v3[matSize][X] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / col_size ) * randomSign();
+        v3[matSize][Y] += RandomFloat(MIN_SKEW_CHAOS, MAX_SKEW_CHAOS * (j + 1) / col_size ) * randomSign();
       }
 
       drawCube(v0[matSize], v1[matSize], v2[matSize], v3[matSize]);
       matSize++;
       // let's add some chaos!
-      trasChaos = RandomFloat(MIN_TRAS_CHAOS * (j + 1) / COL_SIZE, MAX_TRAS_CHAOS * (j + 1) / COL_SIZE );
-      rotoChaos = RandomFloat(MIN_ROTO_CHAOS, MAX_ROTO_CHAOS * (j + 1) / COL_SIZE ) * randomSign();
+      trasChaos = RandomFloat(MIN_TRAS_CHAOS * (j + 1) / col_size, MAX_TRAS_CHAOS * (j + 1) / col_size );
+      rotoChaos = RandomFloat(MIN_ROTO_CHAOS, MAX_ROTO_CHAOS * (j + 1) / col_size ) * randomSign();
     }
     // reset chaos
     trasChaos = 0.0;
@@ -171,7 +209,10 @@ void drawArt()
   }
 
   // We just save the image over here
-  // saveImage();
+  if (isFile) {
+    saveImage(row_size, col_size, cube_size);
+    exit(0);
+  }
 
   glFlush();
   return;
@@ -185,26 +226,79 @@ int main(int argc, char **argv)
   glutInitWindowPosition(1000, 100);
   glutCreateWindow("Art");
 
-  // Manage here the command line
-  for (int i = 0; i < argc; i++)
+  // Manage here the command line.
+  // Options:
+  // -type display|file
+  // -row  <positive integer>
+  // -col  <positive integer>
+  // -size <positive float>
+  for (int i = 1; i < argc; i+=2)
   {
-    std::cout << argv[i] << std::endl;
+    if (!strcmp(argv[i], "-type")) {
+      if (!strcmp(argv[i+1], "display")) {
+        isFile = false;
+      } else {
+        isFile = true;
+      }
+    } else if (!strcmp(argv[i], "-row")) {
+      try
+      {
+        int v = std::stoi(argv[i+1]);
+        ROW = v;
+      }
+      catch (std::invalid_argument const &e)
+      {
+        std::cout << "Bad input: std::invalid_argument thrown" << '\n';
+      }
+      catch (std::out_of_range const &e)
+      {
+        std::cout << "Integer overflow: std::out_of_range thrown" << '\n';
+      }
+    } else if (!strcmp(argv[i], "-col")) {
+      try
+      {
+        int v = std::stoi(argv[i+1]);
+        COL = v;
+      }
+      catch (std::invalid_argument const &e)
+      {
+        std::cout << "Bad input: std::invalid_argument thrown" << '\n';
+      }
+      catch (std::out_of_range const &e)
+      {
+        std::cout << "Integer overflow: std::out_of_range thrown" << '\n';
+      }
+    } else if (!strcmp(argv[i], "-size")) {
+      try
+      {
+        float v = std::stof(argv[i+1]);
+        SIZE = v;
+      }
+      catch (std::invalid_argument const &e)
+      {
+        std::cout << "Bad input: std::invalid_argument thrown" << '\n';
+      }
+      catch (std::out_of_range const &e)
+      {
+        std::cout << "Integer overflow: std::out_of_range thrown" << '\n';
+      }
+    }
   }
 
-  // Choose here based on the input argument
-
-  // Set Multisample anti-aliasing for physical display :0
-  // glutSetOption(GLUT_MULTISAMPLE, 4);
-  // glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
-  // glEnable(GL_MULTISAMPLE);
-
-  // Set anti-aliasing for virtual display :1
-  // glEnable(GL_LINE_SMOOTH);
-  // glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  // glLineWidth(0.5);
-  // glEnable(GL_BLEND);
-  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  // glDisable(GL_MULTISAMPLE);
+  if (isFile) {
+    // Set anti-aliasing for virtual display :1
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glLineWidth(0.5);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_MULTISAMPLE);
+  } else {
+    // Set Multisample anti-aliasing for physical display :0
+    glutSetOption(GLUT_MULTISAMPLE, 4);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
+    glEnable(GL_MULTISAMPLE);
+  }
 
   glutDisplayFunc(drawArt);
   glutMainLoop();
