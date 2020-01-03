@@ -1,4 +1,16 @@
-// Making art with a heart.
+/**
+    lady_entropy.c++
+    Purpose: Making art with a ♥. This program uses OpenGL to display and save to a file a matrix of 2D cubes.
+    The cubes are organized per-row and per-column and at each column it adds increasing random noise.
+    Options:
+      -type display|file
+      -row  <positive integer>
+      -col  <positive integer>
+      -size <positive float>
+
+    @author Fabrizio Romanelli
+    @version 1.0 03/01/20 
+*/
 
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
@@ -232,11 +244,6 @@ int main(int argc, char **argv)
   glutCreateWindow("Art");
 
   // Manage here the command line.
-  // Options:
-  // -type display|file
-  // -row  <positive integer>
-  // -col  <positive integer>
-  // -size <positive float>
   for (int i = 1; i < argc; i+=2)
   {
     if (!strcmp(argv[i], "-type")) {
