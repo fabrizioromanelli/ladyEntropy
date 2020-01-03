@@ -11,8 +11,11 @@ OpenGL will create a beautiful rose for ya. And also some fine digital geometric
 
 # Options
 ```-type``` Let select the program to be used to display or to write to a file. It can be one of the following: ```display``` or ```file```. Example: ```-type display```.
+
 ```-row``` Let select the number of rows for the matrix of cubes. Must be a positive integer. Example: ```-row 10```.
+
 ```-col``` Let select the number of columns for the matrix of cubes. Must be a positive integer. Example: ```-col 20```.
+
 ```-size``` Let select the cube size. Must be a positive floating number. Example: ```-size 0.03```.
 
 # Tricks
