@@ -1,14 +1,14 @@
-# Rose
+# Lady Entropy
 OpenGL will create a beautiful rose for ya. And also some fine digital geometric art!
 
 # Compile
 ```g++ rose.c++ -lglut -lGL -o rose```
-```g++ synth_art.c++ -lglut -lGL -o synth```
+```g++ lady_entropy.c++ -lglut -lGL -o lentroy```
 
 # Run
 ```./rose```
 
-```./synth -display :0```
+```./lentropy -display :0```
 
 # Options
 ```-type``` Let select the program to be used to display or to write to a file. It can be one of the following: ```display``` or ```file```.
@@ -28,4 +28,4 @@ In order to save images at high resolution, you can fake X display on Linux syst
 ``` Xvfb :1 -screen 0 1920x1080x24+32 ```
 This will create a virtual screen that can be used on the synth program to create a huge window useful to save images from OpenGL. It's quite a big fake, but it works ok! ;)
 So, after creating the virtual screen, just run:
-```./synth -display :1```
+```./lentropy -display :1```
