@@ -163,7 +163,7 @@ void drawArt()
   }
 
   size_t matSize = 0;
-  float trasChaos = 0.0, rotoChaos = 0.0, skewChaos = 0.0;
+  float horizontalChaos = 0.0, rotoChaos = 0.0, skewChaos = 0.0, verticalChaos = 0.0;
 
   vec3 rotationAxis(0.0, 0.0, 1.0); // Z-axis
   mat4 translMatrix, rotMatrix, scaleMatrix;
@@ -175,10 +175,14 @@ void drawArt()
 
   for (size_t i = 0; i < row_size; i++)
   {
+    // Computing vertical chaos factor based on the row position
+    float vChaosFactor = (float)MAX_VERT_CHAOS * (1 - (2 * (float)i / (float)row_size));
+
     for (size_t j = 0; j < col_size; j++)
     {
-      translMatrix = translate(mat4(1.0f), vec3(-0.98 + cube_size * j + trasChaos, 0.8 - cube_size * i, 0.0));
-      rotMatrix    = rotate(rotoChaos, rotationAxis); // radians - range for random rotoChaos [MIN_ROTO_CHAOS .. MAX_ROTO_CHAOS]
+      verticalChaos = RandomFloat(0.0, vChaosFactor * (j + 1) / col_size);
+      translMatrix  = translate(mat4(1.0f), vec3(-0.98 + cube_size * j + horizontalChaos, 0.8 - cube_size * i + verticalChaos, 0.0));
+      rotMatrix     = rotate(rotoChaos, rotationAxis); // radians - range for random rotoChaos [MIN_ROTO_CHAOS .. MAX_ROTO_CHAOS]
 
       v0[matSize] = translMatrix * rotMatrix * _vertex0;
       v1[matSize] = translMatrix * rotMatrix * _vertex1;
@@ -200,12 +204,13 @@ void drawArt()
       drawCube(v0[matSize], v1[matSize], v2[matSize], v3[matSize]);
       matSize++;
       // let's add some chaos!
-      trasChaos = RandomFloat(MIN_TRAS_CHAOS * (j + 1) / col_size, MAX_TRAS_CHAOS * (j + 1) / col_size );
+      horizontalChaos = RandomFloat(MIN_TRAS_CHAOS * (j + 1) / col_size, MAX_TRAS_CHAOS * (j + 1) / col_size );
       rotoChaos = RandomFloat(MIN_ROTO_CHAOS, MAX_ROTO_CHAOS * (j + 1) / col_size ) * randomSign();
     }
     // reset chaos
-    trasChaos = 0.0;
-    rotoChaos = 0.0;
+    horizontalChaos = 0.0;
+    verticalChaos   = 0.0;
+    rotoChaos       = 0.0;
   }
 
   // We just save the image over here
