@@ -1,5 +1,5 @@
 # Lady Entropy
-OpenGL will create a beautiful rose for ya. And also some fine digital geometric art!
+OpenGL will create a beautiful [Schotter](https://collections.vam.ac.uk/item/O221321/schotter-print-nees-georg/) art for ya!
 
 # Compile
 ```g++ rose.c++ -lglut -lGL -o rose```
