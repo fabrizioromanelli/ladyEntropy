@@ -1,25 +1,25 @@
-typedef int LONG;
-typedef unsigned short WORD;
-typedef unsigned int DWORD;
+typedef int LE_LONG;
+typedef unsigned short LE_WORD;
+typedef unsigned int LE_DWORD;
 
 typedef struct tagBITMAPFILEHEADER {
-  WORD  bfType;
-  DWORD bfSize;
-  WORD  bfReserved1;
-  WORD  bfReserved2;
-  DWORD bfOffBits;
+  LE_WORD  bfType;
+  LE_DWORD bfSize;
+  LE_WORD  bfReserved1;
+  LE_WORD  bfReserved2;
+  LE_DWORD bfOffBits;
 } __attribute__((packed)) BITMAPFILEHEADER;
 
 typedef struct tagBITMAPINFOHEADER {
-  DWORD biSize;
-  LONG  biWidth;
-  LONG  biHeight;
-  WORD  biPlanes;
-  WORD  biBitCount;
-  DWORD biCompression;
-  DWORD biSizeImage;
-  LONG  biXPelsPerMeter;
-  LONG  biYPelsPerMeter;
-  DWORD biClrUsed;
-  DWORD biClrImportant;
+  LE_DWORD biSize;
+  LE_LONG  biWidth;
+  LE_LONG  biHeight;
+  LE_WORD  biPlanes;
+  LE_WORD  biBitCount;
+  LE_DWORD biCompression;
+  LE_DWORD biSizeImage;
+  LE_LONG  biXPelsPerMeter;
+  LE_LONG  biYPelsPerMeter;
+  LE_DWORD biClrUsed;
+  LE_DWORD biClrImportant;
 } __attribute__((packed)) BITMAPINFOHEADER;
